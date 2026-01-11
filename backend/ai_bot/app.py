@@ -1,21 +1,59 @@
 from fastapi import FastAPI, Request
-import requests
+from fastapi.middleware.cors import CORSMiddleware
 import os
-from bot import handle_message
 import json
+import httpx
+
+from bot import handle_message
+
+# ---------------- CONFIG ---------------- #
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
-app = FastAPI()
 print("BOT TOKEN LOADED:", bool(BOT_TOKEN))
+
+# ---------------- APP ---------------- #
+
+app = FastAPI()
+
+# ---------------- CORS (IMPORTANT) ---------------- #
+# Allows Netlify frontend to call Render backend
+
+app.add_middleware(
+    CORSMiddleware,
+    allow_origins=[
+        "https://sydneywhatson.netlify.app"
+    ],
+    allow_credentials=True,
+    allow_methods=["*"],
+    allow_headers=["*"],
+)
+
+# ---------------- HEALTH CHECK ---------------- #
+
+@app.get("/health")
+async def health():
+    return {"status": "ok"}
+
+# ---------------- EVENTS API ---------------- #
+# (Replace with real DB / CSV logic later)
+
+@app.get("/events")
+async def get_events():
+    return {
+        "events": [],
+        "source": "api-alive"
+    }
+
+# ---------------- TELEGRAM WEBHOOK ---------------- #
 
 @app.post("/telegram")
 async def telegram_webhook(req: Request):
     try:
         data = await req.json()
     except Exception:
-        # Swagger / invalid body safety
+        # Invalid / empty body safety
         return {"ok": True}
 
     # Telegram safety check
@@ -30,15 +68,17 @@ async def telegram_webhook(req: Request):
 
     chat_id = chat["id"]
 
+    # Your bot logic
     reply = handle_message(chat_id, text)
 
-    requests.post(
-        f"{TELEGRAM_API}/sendMessage",
-        json={
-            "chat_id": chat_id,
-            "text": reply
-        },
-        timeout=5
-    )
+    # Async Telegram API call (NON-BLOCKING)
+    async with httpx.AsyncClient(timeout=5) as client:
+        await client.post(
+            f"{TELEGRAM_API}/sendMessage",
+            json={
+                "chat_id": chat_id,
+                "text": reply
+            }
+        )
 
     return {"ok": True}
