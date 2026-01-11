@@ -1,6 +1,7 @@
 import axios from "axios";
 
-export async function fetchEvents() {
-  const res = await axios.get("http://localhost:8000/events");
-  return res.data;
-}
+export const fetchEvents = async () => {
+  const res = await fetch("https://sydneywhatson.onrender.com/events");
+  return res.json();
+};
+
