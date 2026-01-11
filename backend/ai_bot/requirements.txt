@@ -4,3 +4,4 @@ pandas
 requests
 httpx
 apscheduler
+psycopg2-binary
