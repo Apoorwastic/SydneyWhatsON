@@ -87,8 +87,8 @@ Sydney What’s On is a full-stack event discovery platform that aggregates and 
 
 ## 👤 Author
 
-**Apoorwa Priyam**  
-Full Stack Developer | SEO Intern @ Bayer
+**Apoorwa**  
+Full Stack Developer 
 
 ---
 
