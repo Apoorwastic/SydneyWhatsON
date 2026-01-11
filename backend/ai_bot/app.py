@@ -1,5 +1,6 @@
 from fastapi import FastAPI, Request, BackgroundTasks, HTTPException, Header
 from fastapi.middleware.cors import CORSMiddleware
+from contextlib import asynccontextmanager
 import os
 import sys
 import subprocess
@@ -7,13 +8,17 @@ import httpx
 import pandas as pd
 from pathlib import Path
 
+# 🔥 MAKE backend/ IMPORTABLE
+ROOT_DIR = Path(__file__).resolve().parent.parent
+sys.path.append(str(ROOT_DIR))
+
+from api.scheduler import start_scheduler
 from bot import handle_message
 
-# ---------------- PATH SETUP ---------------- #
+# ---------------- PATHS ---------------- #
 
-BASE_DIR = Path(__file__).resolve().parent.parent  # backend/
-SCRAPER_PATH = BASE_DIR / "scraper" / "scrape_events.py"
-CSV_PATH = BASE_DIR / "scraper" / "sydney_events.csv"
+SCRAPER_PATH = ROOT_DIR / "scraper" / "scrape_events.py"
+CSV_PATH = ROOT_DIR / "scraper" / "sydney_events.csv"
 
 # ---------------- CONFIG ---------------- #
 
@@ -23,9 +28,23 @@ TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
 
 print("BOT TOKEN LOADED:", bool(BOT_TOKEN))
 
+# ---------------- LIFESPAN ---------------- #
+
+@asynccontextmanager
+async def lifespan(app: FastAPI):
+    try:
+        start_scheduler()
+        print("[API] Scheduler started")
+    except Exception as e:
+        print("[API] Scheduler failed:", e)
+
+    yield
+
+    print("[API] Shutting down")
+
 # ---------------- APP ---------------- #
 
-app = FastAPI()
+app = FastAPI(lifespan=lifespan)
 
 # ---------------- CORS ---------------- #
 
@@ -43,12 +62,12 @@ app.add_middleware(
 async def health():
     return {"status": "ok"}
 
-# ---------------- EVENTS API ---------------- #
+# ---------------- EVENTS ---------------- #
 
 @app.get("/events")
 async def get_events():
     if not CSV_PATH.exists():
-        return {"events": []}
+        return {"count": 0, "events": []}
 
     df = pd.read_csv(CSV_PATH).fillna("")
     return {
@@ -66,6 +85,7 @@ def run_scraper_process():
     )
     print("[ADMIN] Scraper finished")
 
+
 @app.post("/admin/run-scraper")
 async def run_scraper(
     background_tasks: BackgroundTasks,
@@ -81,7 +101,7 @@ async def run_scraper(
         "message": "Scraper running in background"
     }
 
-# ---------------- TELEGRAM WEBHOOK ---------------- #
+# ---------------- TELEGRAM ---------------- #
 
 @app.post("/telegram")
 async def telegram_webhook(req: Request):
