@@ -1,11 +1,14 @@
 import pandas as pd
-from api.db import get_conn
 from pathlib import Path
+from api.db import get_conn, init_db
 
 BASE_DIR = Path(__file__).resolve().parent.parent
 CSV_PATH = BASE_DIR / "scraper" / "sydney_events.csv"
 
 def load_csv_to_db():
+    # 🔥 CREATE TABLE IF NEEDED
+    init_db()
+
     if not CSV_PATH.exists():
         print("[DB] CSV not found, skipping DB load")
         return
