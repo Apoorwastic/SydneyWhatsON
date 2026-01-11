@@ -78,11 +78,9 @@ async def scrape_site(browser, site, seen_hashes):
 
             title = await safe_text(ev, "h1")
             if not title:
-                await ev.close()
                 continue
 
             if not is_english_title(title) or is_bad_title(title):
-                await ev.close()
                 continue
 
             image = (
@@ -90,10 +88,8 @@ async def scrape_site(browser, site, seen_hashes):
                 or await safe_attr(ev, "meta[name='twitter:image']", "content")
             )
             if not image:
-                await ev.close()
                 continue
 
-            # 🔥 RAW DATE STRING (NO PARSING)
             date_text = (
                 await safe_text(ev, "time")
                 or await safe_text(ev, "[class*=date]")
@@ -107,7 +103,6 @@ async def scrape_site(browser, site, seen_hashes):
 
             event_hash = make_hash(title, date_text, venue, site["name"])
             if event_hash in seen_hashes:
-                await ev.close()
                 continue
             seen_hashes.add(event_hash)
 
@@ -116,7 +111,7 @@ async def scrape_site(browser, site, seen_hashes):
                 "title": title,
                 "description": await safe_attr(ev, "meta[name='description']", "content"),
                 "image_url": image,
-                "start_datetime": date_text,   # ✅ STRING AS-IS
+                "start_datetime": date_text,   # string as-is
                 "end_datetime": None,
                 "venue": venue,
                 "city": CITY,
@@ -131,10 +126,11 @@ async def scrape_site(browser, site, seen_hashes):
 
             print("✔", title, "|", date_text)
 
-        except Exception:
-            pass
+        except Exception as e:
+            print("✖ Failed:", url)
 
-        await ev.close()
+        finally:
+            await ev.close()
 
     await page.close()
     return results
@@ -143,7 +139,14 @@ async def scrape_site(browser, site, seen_hashes):
 
 async def main():
     async with async_playwright() as p:
-        browser = await p.chromium.launch(headless=True)
+        browser = await p.chromium.launch(
+            headless=True,
+            args=[
+                "--no-sandbox",
+                "--disable-dev-shm-usage"
+            ]
+        )
+
         seen_hashes = set()
         all_events = []
 
@@ -151,8 +154,6 @@ async def main():
             all_events += await scrape_site(browser, site, seen_hashes)
 
         df = pd.DataFrame(all_events)
-
-        # ❌ NO DATETIME PARSING ANYMORE
         df.to_csv(OUTPUT_FILE, index=False)
 
         print(f"\nDONE — {len(df)} events saved")
