@@ -4,3 +4,4 @@ pandas
 playwright
 apscheduler
 langdetect
+psycopg2-binary
