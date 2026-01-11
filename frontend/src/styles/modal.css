@@ -1,0 +1,53 @@
+.modal-backdrop {
+  position: fixed;
+  inset: 0;
+  background: rgba(0,0,0,0.75);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+.modal {
+  background: #0f0f0f;
+  padding: 28px;
+  border-radius: 14px;
+  width: 340px;
+  color: white;
+}
+
+.modal h2 {
+  margin-bottom: 8px;
+}
+
+.modal p {
+  opacity: 0.85;
+  margin-bottom: 14px;
+}
+
+.modal input[type="email"] {
+  width: 100%;
+  padding: 10px;
+  border-radius: 8px;
+  border: none;
+  margin-bottom: 12px;
+}
+
+.optin {
+  font-size: 0.85rem;
+  display: flex;
+  gap: 8px;
+  margin-bottom: 18px;
+}
+
+.modal-actions {
+  display: flex;
+  gap: 10px;
+}
+
+.cancel {
+  background: transparent;
+  color: #aaa;
+  border: none;
+  cursor: pointer;
+}

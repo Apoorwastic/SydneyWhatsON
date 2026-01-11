@@ -1,0 +1,65 @@
+.grid-section {
+  padding: 40px;
+}
+
+.grid {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 26px;
+}
+
+/* UPDATED (hover-ready) */
+.card {
+  background: linear-gradient(180deg, #191919, #101010);
+  border-radius: 14px;
+  overflow: hidden;
+  box-shadow: 0 20px 40px rgba(0,0,0,0.6);
+  transition: 
+    transform 0.25s ease,
+    box-shadow 0.25s ease;
+}
+
+/* ✅ NEW: subtle lift + glow */
+.card:hover {
+  transform: translateY(-6px) scale(1.01);
+  box-shadow:
+    0 26px 55px rgba(0,0,0,0.75),
+    0 0 0 1px rgba(255, 138, 0, 0.35),
+    0 0 18px rgba(255, 138, 0, 0.25);
+}
+
+.card img {
+  width: 100%;
+  height: 220px;
+  object-fit: cover;
+  transition: transform 0.35s ease; /* ✅ NEW */
+}
+
+/* ✅ NEW: image zoom on hover */
+.card:hover img {
+  transform: scale(1.05);
+}
+
+.card .content {
+  padding: 16px;
+}
+
+.card .date {
+  color: var(--accent);
+}
+
+.ticket-btn {
+  background: linear-gradient(90deg, #ff8a00, #ffb347);
+  border: none;
+  padding: 10px 20px;
+  border-radius: 22px;
+  font-weight: 600;
+  color: #000;
+  cursor: pointer;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.ticket-btn:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 6px 18px rgba(255, 138, 0, 0.45);
+}
