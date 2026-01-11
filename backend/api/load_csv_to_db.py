@@ -1,5 +1,5 @@
 import pandas as pd
-from db import get_conn
+from api.db import get_conn
 from pathlib import Path
 
 BASE_DIR = Path(__file__).resolve().parent.parent
