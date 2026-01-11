@@ -2,6 +2,7 @@ from fastapi import FastAPI, Request
 import requests
 import os
 from bot import handle_message
+import json
 
 BOT_TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 TELEGRAM_API = f"https://api.telegram.org/bot{BOT_TOKEN}"
@@ -11,9 +12,13 @@ print("BOT TOKEN LOADED:", bool(BOT_TOKEN))
 
 @app.post("/telegram")
 async def telegram_webhook(req: Request):
-    data = await req.json()
+    try:
+        data = await req.json()
+    except Exception:
+        # Swagger / invalid body safety
+        return {"ok": True}
 
-    # ✅ SAFETY CHECK
+    # Telegram safety check
     if "message" not in data:
         return {"ok": True}
 
@@ -24,11 +29,16 @@ async def telegram_webhook(req: Request):
         return {"ok": True}
 
     chat_id = chat["id"]
+
     reply = handle_message(chat_id, text)
 
     requests.post(
         f"{TELEGRAM_API}/sendMessage",
-        json={"chat_id": chat_id, "text": reply}
+        json={
+            "chat_id": chat_id,
+            "text": reply
+        },
+        timeout=5
     )
 
     return {"ok": True}
