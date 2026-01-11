@@ -1,0 +1,62 @@
+.telegram-widget {
+  position: fixed;
+  bottom: 24px;
+  right: 24px;
+  z-index: 9999;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+/* Hidden preview bubble */
+.telegram-preview {
+  background: linear-gradient(135deg, #0b2a3a, #081f2c);
+  color: white;
+  padding: 14px 16px;
+  border-radius: 14px;
+  width: 220px;
+  box-shadow: 0 12px 35px rgba(0, 0, 0, 0.45);
+  opacity: 0;
+  transform: translateX(10px);
+  pointer-events: none;
+  transition: all 0.3s ease;
+}
+
+.telegram-preview p {
+  margin: 0;
+  font-size: 14px;
+}
+
+.telegram-preview .muted {
+  opacity: 0.75;
+  font-size: 12px;
+  margin-top: 4px;
+}
+
+/* Show preview on hover */
+.telegram-widget:hover .telegram-preview {
+  opacity: 1;
+  transform: translateX(0);
+  pointer-events: auto;
+}
+
+/* Floating button */
+.telegram-button {
+  width: 58px;
+  height: 58px;
+  background: linear-gradient(135deg, #0088cc, #00aced);
+  color: white;
+  font-size: 26px;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  text-decoration: none;
+  box-shadow: 0 10px 30px rgba(0, 136, 204, 0.55);
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.telegram-button:hover {
+  transform: scale(1.12);
+  box-shadow: 0 14px 40px rgba(0, 136, 204, 0.8);
+}

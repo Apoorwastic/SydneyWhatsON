@@ -3,6 +3,7 @@ import Header from "./components/Header";
 import HeroSlider from "./components/HeroSlider";
 import EventGrid from "./components/EventGrid";
 import EmailModal from "./components/EmailModal";
+import TelegramWidget from "./components/TelegramWidget";
 import { fetchEvents } from "./api/events";
 import "./styles/theme.css";
 
@@ -20,14 +21,13 @@ export default function App() {
 
   // 🔥 LIVE SEARCH FILTER
   const filteredEvents = events
-  .filter((e) =>
-    e.title.toLowerCase().includes(search.toLowerCase())
-  )
-  .sort((a, b) => {
-    const q = search.toLowerCase();
-    return a.title.toLowerCase().startsWith(q) ? -1 : 1;
-  });
-
+    .filter((e) =>
+      e.title.toLowerCase().includes(search.toLowerCase())
+    )
+    .sort((a, b) => {
+      const q = search.toLowerCase();
+      return a.title.toLowerCase().startsWith(q) ? -1 : 1;
+    });
 
   return (
     <>
@@ -58,6 +58,9 @@ export default function App() {
         onClose={() => setModalOpen(false)}
         ticketUrl={ticketUrl}
       />
+
+      {/* 🔥 TELEGRAM AI ASSISTANT WIDGET */}
+      <TelegramWidget botUsername="SydneyWhatsOnBot" />
     </>
   );
 }
