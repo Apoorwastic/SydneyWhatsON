@@ -1,10 +1,20 @@
 import pandas as pd
 from db import get_conn
+from pathlib import Path
 
-CSV_PATH = "../scraper/sydney_events.csv"
+BASE_DIR = Path(__file__).resolve().parent.parent
+CSV_PATH = BASE_DIR / "scraper" / "sydney_events.csv"
 
-def load_csv():
+def load_csv_to_db():
+    if not CSV_PATH.exists():
+        print("[DB] CSV not found, skipping DB load")
+        return
+
     df = pd.read_csv(CSV_PATH)
+
+    if df.empty:
+        print("[DB] CSV empty, nothing to insert")
+        return
 
     with get_conn() as conn:
         with conn.cursor() as cur:
@@ -28,3 +38,7 @@ def load_csv():
                 ON CONFLICT (hash) DO UPDATE SET
                   last_seen_at = EXCLUDED.last_seen_at;
                 """, row.to_dict())
+
+        conn.commit()
+
+    print(f"[DB] Loaded {len(df)} rows into database")
