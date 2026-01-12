@@ -48,7 +48,7 @@ Sydney What’s On is a full-stack event discovery platform that aggregates and 
 
 ## 🚀 Deployment
 
-- **Frontend:** Netlify (static build, environment-based API configuration)
+- **Frontend:** Render
 - **Backend:** Render (FastAPI + PostgreSQL)
 - **Database:** Render Managed PostgreSQL
 - **Background Jobs:** In-process scheduler running alongside the API
