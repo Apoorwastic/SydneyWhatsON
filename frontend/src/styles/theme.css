@@ -85,3 +85,47 @@ body {
   color: #fff;
   border-bottom: 2px solid #fff;
 }
+/* ================================
+   📱 MOBILE RESPONSIVENESS
+   ================================ */
+
+@media (max-width: 768px) {
+  /* Header layout */
+  header {
+    flex-wrap: wrap;
+    gap: 12px;
+    padding: 12px 16px;
+  }
+
+  /* Search bar full width */
+  .search-bar {
+    width: 100%;
+  }
+
+  .search-bar input {
+    width: 100%;
+  }
+
+  /* Category horizontal scroll */
+  header > div:nth-child(2) {
+    width: 100%;
+    overflow-x: auto;
+  }
+
+  .category-btn {
+    white-space: nowrap;
+  }
+
+  /* Event grid: 1 column */
+  .event-grid {
+    grid-template-columns: 1fr;
+    gap: 16px;
+  }
+}
+
+/* 📱 Tablet */
+@media (min-width: 769px) and (max-width: 1024px) {
+  .event-grid {
+    grid-template-columns: repeat(2, 1fr);
+  }
+}
