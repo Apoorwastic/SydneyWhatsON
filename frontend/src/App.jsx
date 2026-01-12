@@ -5,44 +5,61 @@ import EventGrid from "./components/EventGrid";
 import EmailModal from "./components/EmailModal";
 import TelegramWidget from "./components/TelegramWidget";
 import { fetchEvents } from "./api/events";
+import { categorizeEvent } from "./utils/categorizeEvent";
 import "./styles/theme.css";
 
 export default function App() {
   const [events, setEvents] = useState([]);
   const [search, setSearch] = useState("");
+  const [category, setCategory] = useState("all"); // ✅ ADD
   const [modalOpen, setModalOpen] = useState(false);
   const [ticketUrl, setTicketUrl] = useState(null);
 
   useEffect(() => {
-    // ✅ 1. Load cached events immediately (prevents white page)
+    // ✅ Load cached events immediately
     const cached = localStorage.getItem("events_cache");
     if (cached) {
-      setEvents(JSON.parse(cached));
+      const parsed = JSON.parse(cached).map((e) => ({
+        ...e,
+        category: e.category || categorizeEvent(e.title)
+      }));
+      setEvents(parsed);
     }
 
-    // ✅ 2. Fetch fresh events in background
+    // ✅ Fetch fresh events in background
     fetchEvents()
       .then((data) => {
         if (Array.isArray(data) && data.length) {
-          setEvents(data);
-          localStorage.setItem("events_cache", JSON.stringify(data));
+          const categorized = data.map((e) => ({
+            ...e,
+            category: categorizeEvent(e.title)
+          }));
+          setEvents(categorized);
+          localStorage.setItem("events_cache", JSON.stringify(categorized));
         }
       })
       .catch(() => {
-        // ❌ Do nothing — cached data stays visible
+        // Keep cached data
       });
   }, []);
 
-  // ✅ 3. NEVER return null (prevents blank screen)
+  // ❌ Never return null
   if (!events.length) {
     return <p style={{ padding: "2rem" }}>Loading events…</p>;
   }
 
-  // 🔥 LIVE SEARCH FILTER
+  // 🔥 SEARCH + CATEGORY FILTER
   const filteredEvents = events
-    .filter((e) =>
-      e.title.toLowerCase().includes(search.toLowerCase())
-    )
+    .filter((e) => {
+      const matchSearch = e.title
+        .toLowerCase()
+        .includes(search.toLowerCase());
+
+      const matchCategory =
+        category === "all" || e.category === category;
+
+      return matchSearch && matchCategory;
+    })
     .sort((a, b) => {
       const q = search.toLowerCase();
       return a.title.toLowerCase().startsWith(q) ? -1 : 1;
@@ -50,7 +67,12 @@ export default function App() {
 
   return (
     <>
-      <Header search={search} setSearch={setSearch} />
+      <Header
+        search={search}
+        setSearch={setSearch}
+        category={category}       // ✅ ADD
+        setCategory={setCategory} // ✅ ADD
+      />
 
       <HeroSlider
         events={filteredEvents}
@@ -78,7 +100,7 @@ export default function App() {
         ticketUrl={ticketUrl}
       />
 
-      {/* 🔥 TELEGRAM AI ASSISTANT WIDGET */}
+      {/* 🔥 TELEGRAM AI ASSISTANT */}
       <TelegramWidget botUsername="SydneyWhatsOnBot" />
     </>
   );
