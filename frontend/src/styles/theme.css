@@ -67,3 +67,21 @@ body {
   0%, 100% { opacity: 0.4; }
   50% { opacity: 0.7; }
 }
+.category-btn {
+  background: none;
+  border: none;
+  color: #aaa;
+  cursor: pointer;
+  font-size: 13px;
+  letter-spacing: 1px;
+  padding-bottom: 4px;
+}
+
+.category-btn:hover {
+  color: #fff;
+}
+
+.category-btn.active {
+  color: #fff;
+  border-bottom: 2px solid #fff;
+}
