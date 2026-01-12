@@ -2,7 +2,7 @@
 
 Sydney What’s On is a full-stack event discovery platform that aggregates and displays upcoming events across Sydney from multiple public sources in near real time.
 
-🔗 **Live Website:** https://sydneywhatson.netlify.app  
+🔗 **Live Website:** https://sydneywhatson-1.onrender.com/ 
 🔗 **Public API:** https://sydneywhatson.onrender.com/events  
 
 <img width="1917" height="901" alt="SYDNEYEVENTS" src="https://github.com/user-attachments/assets/6b18954f-a2a4-4f90-9b32-55568d499c9d" />
