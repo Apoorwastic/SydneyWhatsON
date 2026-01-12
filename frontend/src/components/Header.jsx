@@ -1,12 +1,43 @@
 import logo from "../assets/logo.svg";
 
-export default function Header({ search, setSearch }) {
+const CATEGORIES = [
+  "all",
+  "music",
+  "food",
+  "art",
+  "sports",
+  "movies",
+  "tech"
+];
+
+export default function Header({
+  search,
+  setSearch,
+  category,
+  setCategory
+}) {
   return (
     <header style={styles.header}>
       <div style={styles.logo}>
         <img src={logo} alt="Sydney What’s On" style={{ height: "42px" }} />
       </div>
 
+      {/* ✅ CATEGORY FILTERS */}
+      <div style={styles.categories}>
+        {CATEGORIES.map((c) => (
+          <button
+            key={c}
+            onClick={() => setCategory(c)}
+            className={`category-btn ${
+              category === c ? "active" : ""
+            }`}
+          >
+            {c.toUpperCase()}
+          </button>
+        ))}
+      </div>
+
+      {/* SEARCH */}
       <div className="search-bar">
         <input
           type="text"
@@ -34,5 +65,9 @@ const styles = {
   logo: {
     display: "flex",
     alignItems: "center"
+  },
+  categories: {
+    display: "flex",
+    gap: "14px"
   }
 };
